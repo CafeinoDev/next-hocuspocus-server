@@ -1,10 +1,10 @@
 "use client";
 
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, useContext, useEffect, useMemo } from "react";
 import * as Y from "yjs";
 import { HocuspocusProvider } from "@hocuspocus/provider";
 
-const ProviderContext = createContext<{ tasks: Y.Array<any> } | undefined>(undefined);
+const ProviderContext = createContext<{ ydoc: Y.Doc } | undefined>(undefined);
 
 export const useProvider = () => {
     const context = useContext(ProviderContext);
@@ -15,31 +15,16 @@ export const useProvider = () => {
 export const ProviderWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const ydoc = useMemo(() => new Y.Doc(), []);
 
-    const [tasks, setTasks] = useState<Y.Array<any>>(ydoc.getArray('tasks'));
-
     useEffect(() => {
         const provider = new HocuspocusProvider({
             url: "ws://localhost:3031",
-            name: "example-document",
+            name: `hocuspocus-next-document`,
             document: ydoc,
             onStatus(event) {
                 if (event.status === "connected") {
                     console.log("Connected to Hocuspocus server.");
                 }
-            },
-            onSynced(isSynced) {
-                if (isSynced) {
-                    const tasksArray = ydoc.getArray("tasks");
-                    setTasks(tasksArray);
-                }
-            },
-        });
-
-        const tasksArray = ydoc.getArray("tasks");
-        setTasks(tasksArray);
-
-        tasksArray.observe(() => {
-            console.log("Tasks updated:", tasksArray.toArray());
+            }
         });
 
         return () => {
@@ -47,7 +32,6 @@ export const ProviderWrapper: React.FC<{ children: React.ReactNode }> = ({ child
         };
     }, [ydoc]);
 
-    if (!tasks) return null;
 
-    return <ProviderContext.Provider value={{ tasks }}>{children}</ProviderContext.Provider>;
+    return <ProviderContext.Provider value={{ ydoc }}>{children}</ProviderContext.Provider>;
 };

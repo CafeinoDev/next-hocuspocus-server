@@ -1,10 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useProvider } from "./provider";
 
 const TaskComponent = () => {
-    const { tasks } = useProvider();
+    const { ydoc } = useProvider();
+
+    const tasks = useMemo(() => ydoc.getArray("tasks"), [ydoc]);
+
     const [taskList, setTaskList] = useState(tasks.toArray());
     const [newTask, setNewTask] = useState("");
 
@@ -26,7 +29,6 @@ const TaskComponent = () => {
             tasks.unobserve(handleTasksUpdate);
         };
     }, [tasks]);
-
 
     return (
         <div>
