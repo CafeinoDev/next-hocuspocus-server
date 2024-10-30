@@ -7,7 +7,7 @@ export const useYDoc = (roomId: string) => {
 
     useEffect(() => {
         const provider = new HocuspocusProvider({
-            url: "ws://localhost:3031",
+            url: "ws://localhost:3001",
             name: roomId,
             document: ydoc,
             onStatus(event) {

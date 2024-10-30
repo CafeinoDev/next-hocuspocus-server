@@ -12,22 +12,30 @@ const upgradeHandler = nextApp.getUpgradeHandler();
 nextApp.prepare().then(() => {
     const httpServer = createServer((req, res) => {
         const parsedUrl = parse(req.url, true);
+
         nextHandler(req, res, parsedUrl);
     });
 
     const hocuspocusServer = HocuspocusServer.configure({
-        port: 3031,
+        port: 3001,
         name: 'hocuspocus-next',
+
         onRequest: async ({ request, response }) => {
-            nextHandler(request, response);
+            if (request.headers.accept && request.headers.accept.includes('text/html')) {
+                response.writeHead(301, { Location: `http://localhost:${port}${request.url}` });
+                response.end();
+                return;
+            }
             return Promise.reject();
         },
+
         onUpgrade: async ({ request, socket, head }) => {
             if (request.url.startsWith('/_next/webpack-hmr')) {
                 upgradeHandler(request, socket, head);
                 throw null;
             }
         },
+
         onConnect: async () => {
             console.log('🔮 Hocuspocus Server Connected');
         }
