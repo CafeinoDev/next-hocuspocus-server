@@ -18,7 +18,7 @@ const Tasks = () => {
         setNewTask("");
     };
 
-    const removeTask = (index) => {
+    const removeTask = (index: number) => {
         tasks.delete(index);
     }
 
