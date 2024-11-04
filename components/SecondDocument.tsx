@@ -1,7 +1,5 @@
-"use client";
-
 import { useYDoc } from "@/context/DocProvider";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import * as Y from "yjs";
 
 interface Props {
@@ -13,9 +11,9 @@ interface TaskProps {
     owner: string;
 }
 
-const Tasks = ({ name }: Props) => {
+export const SecondDocument = ({ name }: Props) => {
     const { getArray } = useYDoc();
-    const tasks = getArray("tasks") as Y.Array<Y.Map<any>>;
+    const tasks = getArray("tasks2") as Y.Array<Y.Map<any>>;
 
     const [taskList, setTaskList] = useState<TaskProps[]>(() => tasks.toArray().map((taskMap) => taskMap.toJSON() as TaskProps));
     const [newTask, setNewTask] = useState("");
@@ -71,6 +69,4 @@ const Tasks = ({ name }: Props) => {
             </div>
         </div>
     );
-};
-
-export default Tasks;
+}

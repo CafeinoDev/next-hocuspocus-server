@@ -13,7 +13,7 @@ interface TaskProps {
     owner: string;
 }
 
-const Tasks = ({ name }: Props) => {
+const TasksRoom = ({ name }: Props) => {
     const { getArray } = useYDoc();
     const tasks = getArray("tasks") as Y.Array<Y.Map<any>>;
 
@@ -73,4 +73,4 @@ const Tasks = ({ name }: Props) => {
     );
 };
 
-export default Tasks;
+export default TasksRoom;

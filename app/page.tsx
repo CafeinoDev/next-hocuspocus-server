@@ -1,10 +1,17 @@
-import Tasks from "@/components/Tasks";
+import Link from "next/link";
 
 export default function HomePage() {
+
     return (
-        <div className="p-3 space-y-2">
-            <h1 className="text-2xl">Next HocusPocus Server</h1>
-            <Tasks />
+        <div>
+            <ul className="text-blue-600 underline">
+                <li>
+                    <Link href={'provider'}>One ws connection test (using context provider)</Link>
+                </li>
+                <li>
+                    <Link href={'rooms'}>Selecting room</Link>
+                </li>
+            </ul>
         </div>
     );
 }

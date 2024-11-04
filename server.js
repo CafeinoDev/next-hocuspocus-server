@@ -37,7 +37,7 @@ nextApp.prepare().then(() => {
         },
 
         onConnect: async () => {
-            console.log('🔮 Hocuspocus Server Connected');
+            console.log('🔮 Hocuspocus Client Connected');
         }
     });
 
