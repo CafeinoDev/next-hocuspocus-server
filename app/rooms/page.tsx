@@ -1,33 +1,15 @@
 "use client"
 
+import { ConnectedUsers } from "@/components/ConnectedUsers";
 import TasksRoom from "@/components/TaskRoom";
 import { YDocProvider } from "@/context/DocProvider";
-import { useState, useRef } from "react";
+import { generateRandomName } from "@/lib/generateRandomName";
+import { useState, useMemo } from "react";
 
-const generateRandomName = () => {
-    const adjectives = [
-        "Calm", "Curious", "Daring", "Elegant", "Fierce", "Gentle",
-        "Happy", "Jolly", "Kind", "Lovely", "Magical", "Noble",
-        "Peaceful", "Quirky", "Radiant", "Serene", "Tender", "Vibrant",
-        "Wise", "Zesty"
-    ];
 
-    const nouns = [
-        "Apple", "Bear", "Cat", "Dog", "Eagle", "Fox",
-        "Giraffe", "Hawk", "Iguana", "Jaguar", "Koala", "Lion",
-        "Monkey", "Nightingale", "Owl", "Panda", "Quail", "Raven",
-        "Snake", "Tiger", "Unicorn", "Vulture", "Whale", "Yak",
-        "Zebra"
-    ];
-
-    const randomAdjective = adjectives[Math.floor(Math.random() * adjectives.length)];
-    const randomNoun = nouns[Math.floor(Math.random() * nouns.length)];
-
-    return `${randomAdjective} ${randomNoun}`;
-};
 
 export default function RoomsPage() {
-    const nameRef = useRef(generateRandomName());
+    const name = useMemo(generateRandomName, []);
     const [room, setRoom] = useState<string>("room-1");
 
     return (
@@ -40,9 +22,10 @@ export default function RoomsPage() {
                     <button className="w-fit underline text-blue-400" onClick={() => setRoom("room-3")}>Room 3</button>
                 </div>
             </div>
-            <div>
-                <YDocProvider roomId={room}>
-                    <TasksRoom name={nameRef.current} />
+            <div className="flex gap-4">
+                <YDocProvider roomId={room} name={name}>
+                    <TasksRoom name={name} />
+                    <ConnectedUsers />
                 </YDocProvider>
             </div>
         </div>

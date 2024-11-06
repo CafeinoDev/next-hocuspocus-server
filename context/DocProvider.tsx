@@ -1,39 +1,43 @@
-import { createContext, useContext, useEffect, useMemo } from "react";
+import { createContext, useContext, useEffect, useMemo, useRef, useState } from "react";
 import * as Y from "yjs";
 import { HocuspocusProvider, HocuspocusProviderWebsocket } from "@hocuspocus/provider";
+import { generateRandomHexColor } from "@/lib/generateRandomHexColor";
 
-// Define the context type
 interface YDocContextType {
     ydoc: Y.Doc;
+    provider: HocuspocusProvider;
+    awareness: HocuspocusProvider['awareness'];
     getArray: (name: string) => Y.Array<any>;
     getMap: (name: string) => Y.Map<any>;
+    userList: string[];
 }
 
-// Create context for YDoc
 const YDocContext = createContext<YDocContextType | undefined>(undefined);
 
-// Define props for YDocProvider
 interface YDocProviderProps {
     roomId: string;
+    name?: string;
     children: React.ReactNode;
 }
 
-// Singleton WebSocket instance to enable multiplexing
 const websocketConnection = new HocuspocusProviderWebsocket({
     url: "ws://localhost:3001",
+    minDelay: 0,
+    delay: 0,
+    maxDelay: 1000,
+    jitter: true,
 });
 
-// Main YDocProvider component
-export const YDocProvider: React.FC<YDocProviderProps> = ({ roomId, children }) => {
-    // Create a Y.Doc instance, re-initialized with roomId changes
-    const ydoc = useMemo(() => new Y.Doc(), [roomId]);
+export const YDocProvider: React.FC<YDocProviderProps> = ({ roomId, children, name }) => {
+    const [userList, setUserList] = useState<string[]>([]);
+    const providerRef = useRef<HocuspocusProvider>();
+    const ydoc = useMemo(() => new Y.Doc(), []);
 
-    // Track the previous provider and disconnect it when `roomId` changes
-    useEffect(() => {
-        // Initialize a new HocuspocusProvider for the current roomId
-        const provider = new HocuspocusProvider({
-            websocketProvider: websocketConnection, // Reuse the WebSocket connection
-            name: roomId, // Specify document/room name
+    // Initialize the provider once and persist it
+    if (!providerRef.current) {
+        providerRef.current = new HocuspocusProvider({
+            websocketProvider: websocketConnection,
+            name: roomId,
             document: ydoc,
             onStatus(event) {
                 if (event.status === "connected") {
@@ -41,29 +45,47 @@ export const YDocProvider: React.FC<YDocProviderProps> = ({ roomId, children }) 
                 }
             },
         });
+    }
 
-        // Cleanup previous provider on roomId change or component unmount
-        return () => {
-            provider.disconnect();
-            console.log(`Disconnected from room: ${roomId}`);
+    const provider = providerRef.current;
+    const awareness = provider.awareness;
+
+    useEffect(() => {
+        const updateUserList = () => {
+            const users: string[] = [];
+            awareness?.getStates().forEach((state: any) => {
+                if (state.user && state.user.name) users.push(state.user.name);
+            });
+            setUserList(users);
         };
-    }, [roomId, ydoc]);
 
-    // Memoize the context value
+        awareness?.setLocalStateField("user", { name, color: generateRandomHexColor() });
+        awareness?.on("change", updateUserList);
+
+        // Initialize user list on mount
+        updateUserList();
+
+        return () => {
+            awareness?.setLocalState(null);
+            awareness?.off("change", updateUserList);
+        };
+    }, [name, awareness]);
+
     const contextValue = useMemo(() => ({
         ydoc,
+        provider,
+        awareness,
         getArray: (name: string) => ydoc.getArray(name),
         getMap: (name: string) => ydoc.getMap(name),
     }), [ydoc]);
 
     return (
-        <YDocContext.Provider value={contextValue}>
+        <YDocContext.Provider value={{ ...contextValue, userList }}>
             {children}
         </YDocContext.Provider>
     );
 };
 
-// Hook for accessing YDoc context
 export const useYDoc = () => {
     const context = useContext(YDocContext);
     if (!context) {

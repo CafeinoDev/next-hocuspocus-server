@@ -19,7 +19,6 @@ nextApp.prepare().then(() => {
     const hocuspocusServer = HocuspocusServer.configure({
         port: 3001,
         name: 'hocuspocus-next',
-
         onRequest: async ({ request, response }) => {
             if (request.headers.accept && request.headers.accept.includes('text/html')) {
                 response.writeHead(301, { Location: `http://localhost:${port}${request.url}` });
@@ -30,7 +29,7 @@ nextApp.prepare().then(() => {
         },
 
         onUpgrade: async ({ request, socket, head }) => {
-            if (request.url.startsWith('/_next/webpack-hmr')) {
+            if (request.url?.startsWith('/_next/webpack-hmr')) {
                 upgradeHandler(request, socket, head);
                 throw null;
             }
@@ -45,5 +44,5 @@ nextApp.prepare().then(() => {
         console.log(`> Ready on http://localhost:${port}`);
     });
 
-    hocuspocusServer.listen(httpServer);
+    hocuspocusServer.listen();
 });

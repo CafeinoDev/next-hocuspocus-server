@@ -9,7 +9,10 @@ export default function HomePage() {
                     <Link href={'provider'}>One ws connection test (using context provider)</Link>
                 </li>
                 <li>
-                    <Link href={'rooms'}>Selecting room</Link>
+                    <Link href={'rooms'}>Switch between rooms</Link>
+                </li>
+                <li>
+                    <Link href={'editor'}>Tiptap Editor</Link>
                 </li>
             </ul>
         </div>
