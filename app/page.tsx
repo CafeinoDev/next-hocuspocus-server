@@ -6,13 +6,16 @@ export default function HomePage() {
         <div>
             <ul className="text-blue-600 underline">
                 <li>
-                    <Link href={'provider'}>One ws connection test (using context provider)</Link>
+                    <Link href={'provider'}>WS connection test (using context provider)</Link>
                 </li>
                 <li>
                     <Link href={'rooms'}>Switch between rooms</Link>
                 </li>
                 <li>
                     <Link href={'editor'}>Tiptap Editor</Link>
+                </li>
+                <li>
+                    <Link href={'cursors'}>Cursors</Link>
                 </li>
             </ul>
         </div>
