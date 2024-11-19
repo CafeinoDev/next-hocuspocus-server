@@ -5,7 +5,7 @@ import { parse } from 'url';
 
 const port = 3000;
 const dev = process.env.NODE_ENV !== 'production';
-const nextApp = next({ dev });
+const nextApp = next({ dev, experimentalHttpsServer: true });
 const nextHandler = nextApp.getRequestHandler();
 const upgradeHandler = nextApp.getUpgradeHandler();
 
