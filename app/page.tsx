@@ -17,6 +17,9 @@ export default function HomePage() {
                 <li>
                     <Link href={'cursors'}>Cursors</Link>
                 </li>
+                <li>
+                    <Link href={'cursors'}>Cursors Y-presence and Perfect Cursors</Link>
+                </li>
             </ul>
         </div>
     );
