@@ -1,7 +1,7 @@
 import * as Y from "yjs";
 import { HocuspocusProvider } from "@hocuspocus/provider";
 
-const roomId = 'awareness-1';
+const roomId = "awareness-1";
 
 export const ydoc = new Y.Doc();
 
